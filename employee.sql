@@ -72,7 +72,7 @@ INSERT INTO employee_hobby (id, employee_id, hobby_id)
 VALUES
 (1, 2, 3),
 (2, 3, 4),
-(3, 1, 1),
+(3, 2, 1),
 (4, 4, 2);
 
 #DELETE TWO RECORDS FROM ALL THE TABLES
@@ -94,27 +94,37 @@ ALTER TABLE employee_hobby ADD CONSTRAINT hobby_id FOREIGN KEY(hobby_id) REFEREN
 #Selecting all employee name, all hobby_name in single column
 SELECT first_name FROM employee UNION SELECT name FROM hobby;
 
-#Selecting columns from different tables 
+#Selecting columns from different tables (emlpoyee and salary)
 SELECT employee.first_name, employee.last_name, employee_salary.salary  FROM employee JOIN  employee_salary 
 ON employee.id = employee_salary.employee_id;
 
-#Selecting employee name, salary and hobby
-SELECT employee.first_name, employee.last_name, (employee_salary.salary*12), hobby.name FROM hobby,employee JOIN  employee_salary 
-ON employee.id = employee_salary.employee_id WHERE hobby.name 
-IN (SELECT hobby.name FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id);
+#selecting name,salary annually and their hobbies
+SELECT employee.first_name, employee.last_name,(employee_salary.salary*12) AS annual_salary,
+GROUP_CONCAT(hobby.name)
+AS hobbies FROM employee 
+JOIN  employee_salary ON employee.id = employee_salary.employee_id
+JOIN employee_hobby ON employee.id = employee_hobby.employee_id
+JOIN hobby ON employee_hobby.hobby_id = hobby.id
+GROUP BY employee.first_name, employee.last_name,(employee_salary.salary*12);
 
-#Selecting employee name, salary and hobby comma separated
-SELECT employee.first_name, employee.last_name, (employee_salary.salary*12), hobby.name FROM hobby,employee JOIN  employee_salary 
-ON employee.id = employee_salary.employee_id WHERE hobby.name IN 
-(SELECT GROUP_CONCAT(hobby.name) FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id );
 
--- stuff((
---         select ',' + hobby.name
---         from FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id for xml path('')
---     ),1,1,'')
-    
-#Select hobby as per employee ID
-SELECT hobby.name, employee_hobby.employee_id FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id;
+-- #Selecting employee name, salary and hobby
+-- SELECT employee.first_name, employee.last_name, (employee_salary.salary*12), hobby.name FROM hobby,employee JOIN  employee_salary 
+-- ON employee.id = employee_salary.employee_id WHERE hobby.name 
+-- IN (SELECT hobby.name FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id);
+
+
+-- SELECT hobby.name, id FROM hobby WHERE  (SELECT employee.first_name, employee.last_name, (employee_salary.salary*12), hobby.name FROM hobby,employee JOIN  employee_salary 
+-- ON employee.id = employee_salary.employee_id)group by employee_hobby_data;
+
+
+-- SELECT employee.first_name, employee.last_name, (employee_salary.salary*12), hobby.name FROM hobby,employee JOIN  employee_salary 
+-- ON employee.id = employee_salary.employee_id WHERE hobby.name IN 
+-- (SELECT GROUP_CONCAT(hobby.name) FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id );
+
+
+-- #Select hobby as per employee ID
+-- SELECT hobby.name, employee_hobby.employee_id FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id;
 
 #DELETE QUERIES
 -- DROP TABLE employee_salary;
