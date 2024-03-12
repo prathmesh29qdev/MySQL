@@ -17,7 +17,7 @@ first_name VARCHAR(50),
 last_name VARCHAR(50),
 age INT(3),
 mobile_number INT(10),
-adrress VARCHAR(100)
+address VARCHAR(100)
 );
 
 #EMPLOYEE_SALARY TABLE
@@ -38,10 +38,10 @@ hobby_id INT,
 FOREIGN KEY(hobby_id) REFERENCES hobby(id)
 );
 
-#INSERTING INTO THE TABLES
--- INSERT INTO hobby VALUES(1, "HAMEED");
--- INSERT INTO hobby VALUES(2, "RAMBO");
-
+#DISPLAY DATA
+SELECT * FROM `HOBBY`;
+SELECT * FROM `EMPLOYEE`;
+SELECT * FROM `EMPLOYEE_SALARY`;
 SELECT * FROM `EMPLOYEE_HOBBY`;
 
 # INSERT MULTIPLE THE DATA IN ALL THE TABLES
@@ -52,7 +52,7 @@ VALUES
 (3, "MUSIC"),
 (4, "FOOTBALL");
 
-INSERT INTO employee (id, first_name, last_name, age, mobile_number,adrress)
+INSERT INTO employee (id, first_name, last_name, age, mobile_number,address)
 VALUES
 (1, "RAMBO","SINGH", 21, 1234567890, "MUMBAI"),
 (2, "RAMAN", "PATEL", 24, 1234590890, "DELHI"),
@@ -66,7 +66,10 @@ VALUES
 (2, 3, 30000, '2020-8-4' ),
 (3, 1, 9000 ,'2023-9-23' ),
 (4, 2, 41000, '2019-1-29' ),
-(5, 5, 10000, '2018-1-22' );
+(5, 5, 10000, '2018-1-22' ),
+(6, 2, 5000 ,'2023-9-23' ),
+(7, 3, 1000, '2019-1-29' ),
+(8, 4, 70000, '2018-1-22' );
 
 INSERT INTO employee_hobby (id, employee_id, hobby_id)
 VALUES
@@ -88,44 +91,21 @@ SELECT * FROM `hobby`;
 DELETE FROM employee WHERE age LIKE 20 OR age LIKE 21;
 SELECT * FROM `employee`;
 
-ALTER TABLE employee_salary ADD CONSTRAINT employee_id FOREIGN KEY(employee_id) REFERENCES employee (id) ON DELETE CASCADE;
-ALTER TABLE employee_hobby ADD CONSTRAINT hobby_id FOREIGN KEY(hobby_id) REFERENCES hobby (id) ON DELETE CASCADE;
-
-#Selecting all employee name, all hobby_name in single column
+#Create a select single query to get all employee name, all hobby_name in single column
 SELECT first_name FROM employee UNION SELECT name FROM hobby;
 
-#Selecting columns from different tables (emlpoyee and salary)
+#Create a select query to get employee name, his/her employee_salary
 SELECT employee.first_name, employee.last_name, employee_salary.salary  FROM employee JOIN  employee_salary 
 ON employee.id = employee_salary.employee_id;
 
-#selecting name,salary annually and their hobbies
-SELECT employee.first_name, employee.last_name,(employee_salary.salary*12) AS annual_salary,
-GROUP_CONCAT(hobby.name)
-AS hobbies FROM employee 
+#Create a select query to get employee name, total salary of employee, hobby name 
+SELECT CONCAT(employee.first_name, '  ', employee.last_name) AS employee_name,SUM(DISTINCT employee_salary.salary) AS total_salary,
+GROUP_CONCAT(DISTINCT hobby.name) AS hobbies FROM employee
 JOIN  employee_salary ON employee.id = employee_salary.employee_id
 JOIN employee_hobby ON employee.id = employee_hobby.employee_id
 JOIN hobby ON employee_hobby.hobby_id = hobby.id
-GROUP BY employee.first_name, employee.last_name,(employee_salary.salary*12);
-
-
--- #Selecting employee name, salary and hobby
--- SELECT employee.first_name, employee.last_name, (employee_salary.salary*12), hobby.name FROM hobby,employee JOIN  employee_salary 
--- ON employee.id = employee_salary.employee_id WHERE hobby.name 
--- IN (SELECT hobby.name FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id);
-
-
--- SELECT hobby.name, id FROM hobby WHERE  (SELECT employee.first_name, employee.last_name, (employee_salary.salary*12), hobby.name FROM hobby,employee JOIN  employee_salary 
--- ON employee.id = employee_salary.employee_id)group by employee_hobby_data;
-
-
--- SELECT employee.first_name, employee.last_name, (employee_salary.salary*12), hobby.name FROM hobby,employee JOIN  employee_salary 
--- ON employee.id = employee_salary.employee_id WHERE hobby.name IN 
--- (SELECT GROUP_CONCAT(hobby.name) FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id );
-
-
--- #Select hobby as per employee ID
--- SELECT hobby.name, employee_hobby.employee_id FROM hobby JOIN employee_hobby ON hobby.id = employee_hobby.hobby_id;
-
+GROUP BY employee_name;
+        
 #DELETE QUERIES
--- DROP TABLE employee_salary;
--- DELETE FROM HOBBY;
+DROP TABLE employee_salary;
+DELETE FROM HOBBY;
