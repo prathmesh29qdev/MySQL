@@ -67,7 +67,7 @@ VALUES
 (2, 4, 6000 ,'2023-9-23' ),
 (3, 3, 7000 ,'2023-9-23' ),
 (4, 2, 8000 ,'2023-9-23' ),
-(5, 1, 9000 ,'2023-9-23' ),
+(5, 4, 9000 ,'2023-9-23' ),
 (6, 5, 10000 ,'2023-9-23' ),
 (7, 4, 90 ,'2023-9-23' ),
 (8, 2, 100 ,'2023-9-23' );
@@ -122,9 +122,9 @@ SELECT CONCAT(employee.first_name, '  ', employee.last_name) AS employee_name,
 SUM(employee_salary.salary) AS total_salary,
 (SELECT GROUP_CONCAT(DISTINCT hobby.name) FROM hobby WHERE hobby.id IN 
 (SELECT hobby_id FROM employee_hobby WHERE employee_hobby.employee_id = employee.id)) AS hobbies FROM employee
-JOIN  employee_salary ON employee.id = employee_salary.employee_id
+LEFT JOIN  employee_salary ON employee.id = employee_salary.employee_id
 GROUP BY employee_name;
 
 #DELETE QUERIES
-DROP TABLE hobby;
-DELETE FROM HOBBY;
+DROP TABLE employee_salary;
+DELETE FROM employee_salary;
